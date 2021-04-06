@@ -59,9 +59,14 @@ func startCapture(iface string, filter string, channels string) {
     CheckError(err)
     defer inactiveHandle.CleanUp()
 
-    // put into monitor mode
+    // put into monitor modea
     err = inactiveHandle.SetRFMon(true)
-    CheckError(err)
+    if err != nil {
+        log.Printf("SetRFMon failed: %v\n", err)
+        log.Printf("You might have to set this interface into monitor mode manually, such as using\nsudo iwconfig %s mode mon\n", iface)
+        log.Println("If its already in monitor mode, don't worry.")
+    }
+    
 
     err = inactiveHandle.SetSnapLen(65536)
     CheckError(err)
