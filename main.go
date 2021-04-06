@@ -33,6 +33,7 @@ var (
     remoteConn net.Conn
     dontInject bool
     dontSniff bool
+    pcapOutfile string
 )
 
 func sendFrame(conn net.Conn, data []byte) {
@@ -120,6 +121,7 @@ func main() {
     flag.StringVar(&remoteSrv, "r", "", "host:port to connect to (via UDP)")
     flag.BoolVar(&dontInject, "ni", false, "do not inject packets (listen and forward only)")
     flag.BoolVar(&dontSniff, "ns", false, "do not sniff packets on wireless device")
+    flag.StringVar(&pcapOutfile, "o", "", "pcapng file to log incoming packets") // TODO bi-directional packet logging
 
     
 
