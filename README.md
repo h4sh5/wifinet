@@ -35,7 +35,7 @@ sudo ./wifinet -i wlan0 -r 1.2.3.4:1234
 - [x] client/server UDP communication
 - [x] send/recv frames
 - [x] reinject frames
-- [ ] save to pcap
+- [x] save to pcap
 - [ ] channel hopping
 - [ ] tested duplex communication
 - [ ] \[optional\] symmetric key encryption?
