@@ -31,10 +31,11 @@ sudo ./wifinet -i wlan0 -r 1.2.3.4:1234
 ## Progress
 
 - [x] sniff 802.11 packets
-- [ ] channel selection (lock and filter on only one channel)
+- [x] channel selection (lock and filter on only one channel)
 - [x] client/server UDP communication
 - [x] send/recv frames
-- [ ] reinject frames
+- [x] reinject frames
+- [ ] save to pcap
 - [ ] channel hopping
 - [ ] tested duplex communication
 - [ ] \[optional\] symmetric key encryption?

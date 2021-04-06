@@ -31,6 +31,8 @@ import (
 var (
     activePcapHandle *pcap.Handle
     remoteConn net.Conn
+    dontInject bool
+    dontSniff bool
 )
 
 func sendFrame(conn net.Conn, data []byte) {
@@ -54,8 +56,10 @@ func CheckError(err error) {
     }
 }
 
-func startCapture(iface string, filter string, channels string) {
+func setupWirelessIface(iface string, filter string, channels string) {
+
     inactiveHandle, err := pcap.NewInactiveHandle(iface)
+
     CheckError(err)
     defer inactiveHandle.CleanUp()
 
@@ -85,18 +89,16 @@ func startCapture(iface string, filter string, channels string) {
     activePcapHandle.SetBPFFilter(filter)
     CheckError(err)
 
+}
 
-    fmt.Printf("starting capture on %s with bpf '%s'\n", iface, 
-        filter)
+func captureSendLoop() {
 
     packetSource := gopacket.NewPacketSource(activePcapHandle, activePcapHandle.LinkType())
 
     for packet := range packetSource.Packets() {
         // log.Printf("new packet: %v", packet)
-        handleWirelessPacket(packet)  // Do something with a packet here.
+        go handleWirelessPacket(packet)  // Do something with a packet here.
     }
-
-
 
 }
 
@@ -116,9 +118,14 @@ func main() {
     flag.StringVar(&channels, "c", "13", "Wireless channels to listen on, comma separated (only single channel supported for now. Default 13")
     flag.StringVar(&localSrv, "l", ":4141", "udp server:port to LISTEN on")
     flag.StringVar(&remoteSrv, "r", "", "host:port to connect to (via UDP)")
+    flag.BoolVar(&dontInject, "ni", false, "do not inject packets (listen and forward only)")
+    flag.BoolVar(&dontSniff, "ns", false, "do not sniff packets on wireless device")
+
     
 
     flag.Parse()
+
+    log.Printf("dontInject: %v, dontSniff: %v\n", dontInject, dontSniff)
     
     if iface == "" {
         log.Printf("Need to specify wireless interface e.g. wlan0\n");
@@ -128,8 +135,14 @@ func main() {
         os.Exit(1);
     }
 
-    // start udp server
-    go udpListen(localSrv)
+    setupWirelessIface(iface, bpfFilter, channels)
+
+    if (dontSniff) {
+        getFramesFromServer(localSrv, activePcapHandle, dontInject)
+    } else {
+        go getFramesFromServer(localSrv, activePcapHandle, dontInject)
+    }
+    
 
     // remote connection
     if remoteSrv != "" {
@@ -139,7 +152,10 @@ func main() {
         CheckError(err)
     }
 
-    startCapture(iface, bpfFilter, channels)
-
+    if (!dontSniff) {
+        fmt.Printf("starting capture on %s with bpf '%s'\n", iface, bpfFilter)
+        captureSendLoop()    
+    }
+    
 
 }
