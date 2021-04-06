@@ -36,6 +36,7 @@ sudo ./wifinet -i wlan0 -r 1.2.3.4:1234
 - [x] send/recv frames
 - [x] reinject frames
 - [x] save to pcap
+- [ ] MAC address filtering
 - [ ] channel hopping
 - [ ] tested duplex communication
 - [ ] \[optional\] symmetric key encryption?
