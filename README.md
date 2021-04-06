@@ -24,3 +24,12 @@ go build
 ./wifinet -i <iface> -f <bpf filter> [other options]
 ```
 
+## Progress
+
+- [x] sniff 802.11 packets
+- [ ] channel selection / hopping
+- [ ] client/server UDP communication
+- [ ] tunnel packet bytes
+- [ ] reinject frame
+- [ ] duplex communications with multiple threads (go routines?)
+- [ ] \[optional\] symmetric key encryption?
