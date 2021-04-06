@@ -24,16 +24,17 @@ needs to run on both ends
 
 ```
 go build
-./wifinet -i <iface> -f <bpf filter> [other options]
+# iface wlan0, remote host 1.2.3.4:1234
+./wifinet -i wlan0 -r 1.2.3.4:1234
 ```
 
 ## Progress
 
 - [x] sniff 802.11 packets
 - [ ] channel selection (lock and filter on only one channel)
-- [ ] client/server UDP communication
-- [ ] tunnel packet bytes
+- [x] client/server UDP communication
+- [x] send/recv frames
 - [ ] reinject frames
 - [ ] channel hopping
-- [ ] duplex communications with multiple threads (go routines?)
+- [ ] tested duplex communication
 - [ ] \[optional\] symmetric key encryption?
