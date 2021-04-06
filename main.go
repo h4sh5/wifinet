@@ -28,56 +28,55 @@ import (
 )
 
 var (
-    handle *pcap.Handle
+    activePcapHandle *pcap.Handle
 )
 
 
-func handlePacket(packet gopacket.Packet) {
+func handleWirelessPacket(packet gopacket.Packet) {
+    // send to network socket 
     fmt.Println(packet)
 }
 
-func startCapture(iface string, filter string) {
-    ihandle, err := pcap.NewInactiveHandle(iface)
-    if err != nil {
-      log.Fatal(err)
+/* A Simple function to verify error */
+func CheckError(err error) {
+    if err  != nil {
+        log.Fatal(err)
     }
-    defer ihandle.CleanUp()
+}
+
+func startCapture(iface string, filter string) {
+    inactiveHandle, err := pcap.NewInactiveHandle(iface)
+    CheckError(err)
+    defer inactiveHandle.CleanUp()
 
     // put into monitor mode
-    err = ihandle.SetRFMon(true)
-    if err != nil {
-      log.Fatal(err)
-    }
+    err = inactiveHandle.SetRFMon(true)
+    CheckError(err)
 
-    if err = ihandle.SetSnapLen(65536); err != nil {
-        log.Fatal(err)
-    }
+    err = inactiveHandle.SetSnapLen(65536)
+    CheckError(err)
 
     readTimeout := 500 * time.Millisecond
-    if err = ihandle.SetTimeout(readTimeout); err != nil {
-        log.Fatal(err)
-    }
+    inactiveHandle.SetTimeout(readTimeout)
+    CheckError(err)
 
     // activate handle
-    handle, err = ihandle.Activate()
-    if err != nil {
-      log.Fatal(err)
-    }
+    activePcapHandle, err = inactiveHandle.Activate()
+    CheckError(err)
 
     // set bpf and start capture
-    if err := handle.SetBPFFilter(filter); err != nil {
-        panic(err)
-    } 
+    activePcapHandle.SetBPFFilter(filter)
+    CheckError(err)
 
 
     fmt.Printf("starting capture on %s with bpf '%s'\n", iface, 
         filter)
 
-    packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
+    packetSource := gopacket.NewPacketSource(activePcapHandle, activePcapHandle.LinkType())
 
     for packet := range packetSource.Packets() {
         log.Printf("new packet: %v", packet)
-        handlePacket(packet)  // Do something with a packet here.
+        handleWirelessPacket(packet)  // Do something with a packet here.
     }
 
 
@@ -89,13 +88,18 @@ func main() {
  
     var iface string    
     var bpfFilter string
+    var channels string
+    var remoteSrv string
+    var localSrv string
  
     // flags declaration using flag package
     flag.StringVar(&iface, "i", "", "Specify interface")
     flag.StringVar(&bpfFilter, "f", "", "Specify BPF filter")
-    // TODO: add socket (IP and port)
+    // TODO: multi channel support
+    flag.StringVar(&channels, "c", "13", "Wireless channels to listen on, comma separated (only single channel supported for now. Default 13")
+    flag.StringVar(&localSrv, "l", ":4141", "udp server:port to LISTEN on")
+    flag.StringVar(&remoteSrv, "r", "", "host:port to connect to (via UDP)")
     
-
 
     flag.Parse()
     
@@ -106,6 +110,9 @@ func main() {
         
         os.Exit(1);
     }
+
+    // start udp server
+    go udp_listen(localSrv)
 
     startCapture(iface, bpfFilter)
 
