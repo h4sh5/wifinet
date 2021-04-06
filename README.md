@@ -30,9 +30,10 @@ go build
 ## Progress
 
 - [x] sniff 802.11 packets
-- [ ] channel selection / hopping
+- [ ] channel selection (lock and filter on only one channel)
 - [ ] client/server UDP communication
 - [ ] tunnel packet bytes
-- [ ] reinject frame
+- [ ] reinject frames
+- [ ] channel hopping
 - [ ] duplex communications with multiple threads (go routines?)
 - [ ] \[optional\] symmetric key encryption?
