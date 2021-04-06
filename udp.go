@@ -7,7 +7,8 @@ import (
 )
 
 
-func udp_listen(server string) {
+
+func udpListen(server string) {
     /* Lets prepare a address at any address at port 10001*/   
     ServerAddr,err := net.ResolveUDPAddr("udp", server)
     CheckError(err)
@@ -24,6 +25,8 @@ func udp_listen(server string) {
         n,addr,err := ServerConn.ReadFromUDP(buf)
         log.Printf("Received len %v from addr %v\n:", n, addr)
         log.Printf("%s", hex.Dump(buf[0:n]))
+
+        // inject it back into wireless interface
  
         if err != nil {
             log.Println("Error: ",err)

@@ -25,16 +25,26 @@ import (
     "time"
     "github.com/google/gopacket"
     "github.com/google/gopacket/pcap"
+    "net"
 )
 
 var (
     activePcapHandle *pcap.Handle
+    remoteConn net.Conn
 )
+
+func sendFrame(conn net.Conn, data []byte) {
+    /* send the wireless frame to the remote connection */
+    conn.Write(data)
+}
 
 
 func handleWirelessPacket(packet gopacket.Packet) {
     // send to network socket 
-    fmt.Println(packet)
+    // fmt.Println(packet)
+    if remoteConn != nil {
+        sendFrame(remoteConn, packet.Data())
+    }
 }
 
 /* A Simple function to verify error */
@@ -75,7 +85,7 @@ func startCapture(iface string, filter string) {
     packetSource := gopacket.NewPacketSource(activePcapHandle, activePcapHandle.LinkType())
 
     for packet := range packetSource.Packets() {
-        log.Printf("new packet: %v", packet)
+        // log.Printf("new packet: %v", packet)
         handleWirelessPacket(packet)  // Do something with a packet here.
     }
 
@@ -112,7 +122,15 @@ func main() {
     }
 
     // start udp server
-    go udp_listen(localSrv)
+    go udpListen(localSrv)
+
+    // remote connection
+    if remoteSrv != "" {
+        serverAddr,err := net.ResolveUDPAddr("udp", remoteSrv)
+        CheckError(err)
+        remoteConn, err = net.DialUDP("udp", nil, serverAddr)
+        CheckError(err)
+    }
 
     startCapture(iface, bpfFilter)
 
