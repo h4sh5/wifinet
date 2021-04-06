@@ -2,6 +2,9 @@
 
 tunneling wifi packets over the internet
 
+
+CONTRIBUTIONS WELCOME! If you like the idea, please help out by sending Pull Requests :)
+
 ## Proposed Architecture
 
 ```
