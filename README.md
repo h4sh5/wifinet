@@ -39,4 +39,5 @@ sudo ./wifinet -i wlan0 -r 1.2.3.4:1234
 - [ ] MAC address filtering
 - [ ] channel hopping
 - [ ] tested duplex communication
+- [ ] \[optional\] dedicated interfaces for sending and receiving? (to reduce noise)
 - [ ] \[optional\] symmetric key encryption?
