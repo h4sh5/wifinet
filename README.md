@@ -6,10 +6,10 @@ tunneling wifi packets over the internet
 
 ```
              \    /                                                                802.11
-              \  /                                                                 frames   
-            |------|     -------\         custom       ((  )            -------      \__/
-802.11 <~~> | wifi | ==> wifinet => BPF + filters <=> (      ) )  <===> wifinet <~~> |  | 
-frames <~~> | card |     -------/                    ( internet )       -------      |__|
+              \  /                                                                  frames   
+            |------|     -------          custom        ((  )          -------       \__/
+802.11 <~~> | wifi |<==> wifinet => BPF + filters <=> (       )  <===> wifinet <~~>  |  | 
+frames <~~> | card |     -------                    ( internet )       -------       |__|
             |------|                                                  
 
 ```
