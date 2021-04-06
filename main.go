@@ -54,7 +54,7 @@ func CheckError(err error) {
     }
 }
 
-func startCapture(iface string, filter string) {
+func startCapture(iface string, filter string, channels string) {
     inactiveHandle, err := pcap.NewInactiveHandle(iface)
     CheckError(err)
     defer inactiveHandle.CleanUp()
@@ -69,6 +69,8 @@ func startCapture(iface string, filter string) {
     readTimeout := 500 * time.Millisecond
     inactiveHandle.SetTimeout(readTimeout)
     CheckError(err)
+
+    SetupChannelHopping(iface, channels)
 
     // activate handle
     activePcapHandle, err = inactiveHandle.Activate()
@@ -132,7 +134,7 @@ func main() {
         CheckError(err)
     }
 
-    startCapture(iface, bpfFilter)
+    startCapture(iface, bpfFilter, channels)
 
 
 }

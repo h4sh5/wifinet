@@ -20,12 +20,12 @@ frames <~~> | card |     -------                    ( internet )       -------  
 
 ## Usage
 
-needs to run on both ends
+needs to run on both ends.  sudo / root perms required because of packet sniffing things (unless you do setcap on the binary correctly)
 
 ```
 go build
 # iface wlan0, remote host 1.2.3.4:1234
-./wifinet -i wlan0 -r 1.2.3.4:1234
+sudo ./wifinet -i wlan0 -r 1.2.3.4:1234
 ```
 
 ## Progress
